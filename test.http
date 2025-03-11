@@ -2,8 +2,5 @@ POST http://localhost:3000/api/users
 Content-Type: application/json
 
 {
-  "name": "Jane Doe",
-  "email": "janedoe@example.com",
-  "password": "MySecurePass",
-  "role": "tenant"
+  "email": "janedoe@example.com"
 }
