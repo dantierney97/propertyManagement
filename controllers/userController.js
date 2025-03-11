@@ -61,16 +61,17 @@ const getUserByEmail = async (req, res) => {
 
         // Query the database for the user
         const result = await pool.query(
-            "SELECT id, name, email, role FROM users WHERE email = $1", [email]
+            "SELECT id, name, email, role FROM users WHERE email = $1", 
+            [email]
         );
 
         // Check if the user exists
-        if (results.rows.length === 0) {
+        if (result.rows.length === 0) {
             return res.status(400).json({ error: "User not found!"});
         }
 
         // Return the user's details (excluding the password)
-        res.json(results.rows(0));
+        res.json(result.rows[0]);
     }
     catch ( error ) {   // Catch any unhandled errors
         console.error("Error retrieving user email: ", error.message);
