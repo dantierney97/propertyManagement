@@ -61,7 +61,7 @@ const getUserByEmail = async (req, res) => {
 
         // Query the database for the user
         const result = await pool.query(
-            "SELECT id, name, email, role FROM users WHERE email = $1", 
+            "SELECT id, name, email, role FROM users WHERE email = $1",  // Excludes password
             [email]
         );
 
