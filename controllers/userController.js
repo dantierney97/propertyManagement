@@ -1,6 +1,6 @@
 // Imports
 const bcrypt    = require("bcrypt");                // Import Bcrypt for password hashing
-const pool      = require("./db/postgres");         // Import PSQL database connection
+const pool      = require("../db/postgres");         // Import PSQL database connection
 require('dotenv').config();                         // Loads environment variables
 
 /**
@@ -9,7 +9,7 @@ require('dotenv').config();                         // Loads environment variabl
  * @param {Object} res - The reponse object containing the stored details
  */
 
-const createUser = async () => {
+const createUser = async (req, res) => {
     // Extract the user's details from the request body
     const {name, email, password, role} = req.body;
 
@@ -30,13 +30,13 @@ const createUser = async () => {
         const result = await pool.query(
             "INSERT INTO users (name, email, password_hash, role)" +
             "VALUES ($1, $2, $3, $4)" +
-            "RETURNING id, name, email, role", [id, name, email, role]
+            "RETURNING id, name, email, role", [name, email, hashedPassword, role]
         );
 
         // Output returned message
         res.status(201).json({
             message:"User created successfully!",
-            user: result.rows[1]
+            user: result.rows[0]
         });
 
     }

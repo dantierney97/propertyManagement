@@ -9,4 +9,7 @@ const router = express.Router();    // Create a new Express Router instance
  */
 router.post("/users", createUser);
 
+// Output sucessful loading to console
+console.log("userRoutes Loaded Successfully!");
+
 module.exports = router;

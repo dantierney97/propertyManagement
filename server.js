@@ -20,7 +20,7 @@ const port = process.env.PORT;      // Set the server port
 app.use(express.json());
 
 // Mount Routes with a base path
-app.use("/api/users", userRoutes);
+app.use("/api", userRoutes);
 
 /**
  * Main Application
