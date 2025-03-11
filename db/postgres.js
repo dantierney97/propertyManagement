@@ -1,5 +1,5 @@
 // Import the 'pg' module (PostgreSQL Client for Node.js)
-const { pool } = require("pg");
+const { Pool } = require("pg");
 
 // Load environment files from the .env file
 require("dotenv").config();
