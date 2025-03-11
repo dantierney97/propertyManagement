@@ -49,4 +49,33 @@ const createUser = async (req, res) => {
     }
 };
 
-module.exports = { createUser };
+const getUserByEmail = async (req, res) => {
+    // Extract the email address to be used for the search
+    const { email } = req.body;
+
+    try {
+        // Validate that an email has been provided
+        if (!email) {
+            return res.status(400).json({ error: "An email address is required!"});
+        }
+
+        // Query the database for the user
+        const result = await pool.query(
+            "SELECT id, name, email, role FROM users WHERE email = $1", [email]
+        );
+
+        // Check if the user exists
+        if (results.rows.length === 0) {
+            return res.status(400).json({ error: "User not found!"});
+        }
+
+        // Return the user's details (excluding the password)
+        res.json(results.rows(0));
+    }
+    catch ( error ) {   // Catch any unhandled errors
+        console.error("Error retrieving user email: ", error.message);
+        res.status(500).json({ error: "Server Error!"});
+    }
+}
+
+module.exports = { createUser, getUserByEmail };
