@@ -13,7 +13,7 @@ const router = express.Router();
  * This route handles user registration by accepting user details in the request body,
  * validating the input, hashing the password, and storing the record in the database.
  */
-router.post("/users/createUser", createUser);
+router.post("/createUser", createUser);
 
 /**
  * @route   POST /api/users/getUserByEmail
@@ -23,7 +23,7 @@ router.post("/users/createUser", createUser);
  * This route searches for a user based on the email provided in the request body.
  * If found, it returns the user details excluding the password.
  */
-router.post("/users/getUserByEmail", getUserByEmail);
+router.post("/getUserByEmail", getUserByEmail);
 
 // Log successful loading of user routes to the console
 console.log("userRoutes Loaded Successfully!");
