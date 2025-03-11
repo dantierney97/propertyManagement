@@ -10,7 +10,7 @@ const router = express.Router();
  * @desc    Create a new maintenance request
  * @access  Public (Authentication can be added later)
  */
-router.post("/", createMaintenanceRequest);
+router.post("/create", createMaintenanceRequest);
 
 /**
  * @route   PUT /api/maintenance/update
