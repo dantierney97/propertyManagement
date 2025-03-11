@@ -7,10 +7,11 @@ const express = require('express');                     // Express.js for handli
 const {connectPostgres} = require("./db/postgres");     // Import Postgres connection function
 const connectMongo = require("./db/mongo");             // Import MongoDB connection function
 const { connect } = require('mongoose');
+require('dotenv').config();
 
 // Initialise Express
 const app = express();
-const port = 3000;      // Set the server port
+const port = process.env.PORT;      // Set the server port
 
 // Setup Middleware to parse json
 app.use(express.json());
