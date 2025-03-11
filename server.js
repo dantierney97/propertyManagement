@@ -1,45 +1,76 @@
 /**
- * Main Entry Point for Server
+ * Main Entry Point for the Server
+ * 
+ * This file initializes and starts the backend server for the Smart Property Management system.
+ * It connects to both PostgreSQL and MongoDB, sets up middleware, and mounts API routes.
  */
 
+// ==============================
 // Module Imports
-const express = require('express');                     // Express.js for handling web requests
-const {connectPostgres} = require("./db/postgres");     // Import Postgres connection function
+// ==============================
+
+const express = require('express');                     // Import Express.js for handling web requests
+const { connectPostgres } = require("./db/postgres");   // Import PostgreSQL connection function
 const connectMongo = require("./db/mongo");             // Import MongoDB connection function
-const { connect } = require('mongoose');
-require('dotenv').config();
+require('dotenv').config();                             // Load environment variables from .env
 
-// Import Route Modules
-const userRoutes = require("./routes/userRoutes");      // Import userRoutes
+// ==============================
+// Route Imports
+// ==============================
 
-// Initialise Express
-const app = express();
-const port = process.env.PORT;      // Set the server port
+const userRoutes = require("./routes/userRoutes");      // Import userRoutes for user-related API endpoints
 
-// Setup Middleware to parse json
-app.use(express.json());
+// ==============================
+// Initialize Express Application
+// ==============================
 
-// Mount Routes with a base path
-app.use("/api", userRoutes);
+const app = express();                 // Create an Express application
+const port = process.env.PORT || 5000; // Set the server port (default to 5000 if not defined in .env)
+
+// ==============================
+// Middleware Configuration
+// ==============================
+
+app.use(express.json()); // Middleware to parse incoming JSON requests
+
+// ==============================
+// API Route Mounting
+// ==============================
+
+app.use("/api", userRoutes); // Mount userRoutes under the "/api" base path
+
+// ==============================
+// Main Application Logic
+// ==============================
 
 /**
- * Main Application
+ * Start the Server
+ * 
+ * This function:
+ * 1. Logs the start of the backend service.
+ * 2. Connects to both PostgreSQL and MongoDB.
+ * 3. Starts the Express server on the defined port.
  */
-
 const startServer = async () => {
+    console.log("Starting Smart Property Management Backend..."); // Log startup message
 
-    console.log("Starting Smart Property Management Backend...");   // Output start of startup
+    try {
+        // Attempt connection to both databases
+        await connectPostgres();  // Connect to the PostgreSQL database
+        await connectMongo();     // Connect to the MongoDB database
 
-    // Attempt connection to both databases
-    await connectPostgres();            // Test connection to the Postgres server
-    await connectMongo();               // Test connection to the MongoDB server
-
-    // Start Express server
-    app.listen(port, () => {
-        console.log(`Express Server running on http://localhost:${port}`);
-    });
-
+        // Start Express server
+        app.listen(port, () => {
+            console.log(`Express Server running on http://localhost:${port}`); // Log server start
+        });
+    } catch (error) {
+        console.error("Error starting the server:", error.message); // Log any errors
+        process.exit(1); // Exit process if startup fails
+    }
 };
 
-// Run Main Loop
-startServer();
+// ==============================
+// Run the Server
+// ==============================
+
+startServer(); // Call the function to start the server
