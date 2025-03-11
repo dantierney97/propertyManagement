@@ -2,7 +2,7 @@
 const mongoose = require("mongoose");
 
 // Load environment variables from the .env file
-require ("dotnet").config();
+require ("dotenv").config();
 
 /**
  * Function to connect to MongoDB using the given URI in .env
