@@ -9,10 +9,10 @@
 // Module Imports
 // ==============================
 
-const express = require('express');                     // Import Express.js for handling web requests
-const { connectPostgres } = require("./db/postgres");   // Import PostgreSQL connection function
-const connectMongo = require("./db/mongo");             // Import MongoDB connection function
-require('dotenv').config();                             // Load environment variables from .env
+const express               = require('express');         // Import Express.js for handling web requests
+const { connectPostgres }   = require("./db/postgres");   // Import PostgreSQL connection function
+const connectMongo          = require("./db/mongo");      // Import MongoDB connection function
+require('dotenv').config();                               // Load environment variables from .env
 
 // ==============================
 // Route Imports
@@ -26,7 +26,7 @@ const maintenanceRoutes =   require("./routes/maintenanceRoutes");  // Import ma
 // ==============================
 
 const app   =   express();                 // Create an Express application
-const port  =   process.env.PORT || 5000; // Set the server port (default to 5000 if not defined in .env)
+const port  =   process.env.PORT || 5000;  // Set the server port (default to 5000 if not defined in .env)
 
 // ==============================
 // Middleware Configuration
@@ -38,8 +38,8 @@ app.use(express.json()); // Middleware to parse incoming JSON requests
 // API Route Mounting
 // ==============================
 
-app.use("/api/users", userRoutes); // Mount userRoutes under the "/api" base path
-app.use("/api/maintenance", maintenanceRoutes);
+app.use("/api/users", userRoutes);                  // Mount userRoutes under the "/api" base path
+app.use("/api/maintenance", maintenanceRoutes);     // Mount maintenanceRoots under the "/api" base path
 
 // ==============================
 // Main Application Logic
