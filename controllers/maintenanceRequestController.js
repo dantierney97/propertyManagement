@@ -86,5 +86,22 @@ const addMaintenanceUpdate = async (req, res) => {
     }
 };
 
+/**
+ * Assigns a maintenance request to a contractor or company
+ * 
+ * This function will allow an existing maintenance request to be assigned to a given contractor or company.
+ * It retrieves the request by its ID, assigns a contractor_id to the relevant field, and saves the modified document.
+ * 
+ * @param {Object} req - The request object containg the contractor_id
+ * @param {Object} res - The response object used to return the result
+ */
+const assignContractor = async (req, res) => {
+    try {
+
+    }
+    catch (error) {
+
+    }
+};
 // Export the functions so they can be used in other parts of the application
 module.exports = { createMaintenanceRequest, addMaintenanceUpdate };
