@@ -18,7 +18,8 @@ require('dotenv').config();                             // Load environment vari
 // Route Imports
 // ==============================
 
-const userRoutes = require("./routes/userRoutes");      // Import userRoutes for user-related API endpoints
+const userRoutes =          require("./routes/userRoutes");         // Import userRoutes for user-related API endpoints
+const maintenanceRoutes =   require("./routes/maintenanceRoutes");  // Import maintenanceRoutes for user-related API endpoints
 
 // ==============================
 // Initialize Express Application

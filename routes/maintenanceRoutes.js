@@ -6,7 +6,7 @@ const { createMaintenanceRequest, addMaintenanceUpdate } = require("../controlle
 const router = express.Router();
 
 /**
- * @route   POST /api/maintenance
+ * @route   POST /api/maintenance/create
  * @desc    Create a new maintenance request
  * @access  Public (Authentication can be added later)
  */
