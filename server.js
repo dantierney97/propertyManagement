@@ -9,12 +9,18 @@ const connectMongo = require("./db/mongo");             // Import MongoDB connec
 const { connect } = require('mongoose');
 require('dotenv').config();
 
+// Import Route Modules
+const userRoutes = require("./routes/userRoutes");      // Import userRoutes
+
 // Initialise Express
 const app = express();
 const port = process.env.PORT;      // Set the server port
 
 // Setup Middleware to parse json
 app.use(express.json());
+
+// Mount Routes with a base path
+app.use("/api/users", userRoutes);
 
 /**
  * Main Application
