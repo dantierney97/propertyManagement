@@ -38,7 +38,7 @@ app.use(express.json()); // Middleware to parse incoming JSON requests
 // API Route Mounting
 // ==============================
 
-app.use("/api", userRoutes); // Mount userRoutes under the "/api" base path
+app.use("/api/users", userRoutes); // Mount userRoutes under the "/api" base path
 app.use("/api/maintenance", maintenanceRoutes);
 
 // ==============================
