@@ -7,12 +7,12 @@ const router = express.Router();    // Create a new Express Router instance
 /**
  * Route to create new user
  */
-router.post("/users", createUser);
+router.post("/users/createUser", createUser);
 
 /**
  * Route to get user by email search
  */
-router.post("/users", getUserByEmail);
+router.post("/users/getUserByEmail", getUserByEmail);
 
 // Output sucessful loading to console
 console.log("userRoutes Loaded Successfully!");
