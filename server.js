@@ -18,15 +18,15 @@ require('dotenv').config();                             // Load environment vari
 // Route Imports
 // ==============================
 
-const userRoutes =          require("./routes/userRoutes");         // Import userRoutes for user-related API endpoints
+const userRoutes        =   require("./routes/userRoutes");         // Import userRoutes for user-related API endpoints
 const maintenanceRoutes =   require("./routes/maintenanceRoutes");  // Import maintenanceRoutes for user-related API endpoints
 
 // ==============================
 // Initialize Express Application
 // ==============================
 
-const app = express();                 // Create an Express application
-const port = process.env.PORT || 5000; // Set the server port (default to 5000 if not defined in .env)
+const app   =   express();                 // Create an Express application
+const port  =   process.env.PORT || 5000; // Set the server port (default to 5000 if not defined in .env)
 
 // ==============================
 // Middleware Configuration
@@ -39,6 +39,7 @@ app.use(express.json()); // Middleware to parse incoming JSON requests
 // ==============================
 
 app.use("/api", userRoutes); // Mount userRoutes under the "/api" base path
+app.use("/api/maintenance", maintenanceRoutes);
 
 // ==============================
 // Main Application Logic
