@@ -1,6 +1,6 @@
 // Import required modules
-const bcrypt = require("bcrypt");                   // Import Bcrypt for password hashing
-const { pool } = require("../db/postgres");         // Import PostgreSQL database connection pool
+const bcrypt        = require("bcrypt");            // Import Bcrypt for password hashing
+const { pool }      = require("../db/postgres");    // Import PostgreSQL database connection pool
 require('dotenv').config();                         // Load environment variables from .env file
 
 /**
