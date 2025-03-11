@@ -27,7 +27,6 @@ const createUser = async () => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         // Insert entry into database
-        const id;
         const result = await pool.query(
             "INSERT INTO users (name, email, password_hash, role)" +
             "VALUES ($1, $2, $3, $4)" +
@@ -42,10 +41,12 @@ const createUser = async () => {
 
     }
     catch (error){
-        console.error("Error creating user:", error.message);
+        console.error("Error creating user:", error.message);               // Output error message to console
         if (error.code === "23505") {
             return res.status(400).json({ error: "Email already exists!"});
         }
         res.status(500).json({ error: "Server Error!"});
     }
-}
+};
+
+module.exports = { createUser };
