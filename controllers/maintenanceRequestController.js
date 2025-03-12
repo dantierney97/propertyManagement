@@ -97,11 +97,26 @@ const addMaintenanceUpdate = async (req, res) => {
  */
 const assignContractor = async (req, res) => {
     try {
+        // Extract contractor details from the request body
+        const { request_id, contractor_id} = eq.body;
 
+        // Find the relevant maintenance request by ID
+        const request = await MaintenanceRequest.findById(request_id);
+        if (!request) {     // Checks that the request is not null to ensure that a request has been found
+            return res.status(404).json({ error: "Maintenance Request not found"});
+        }
+
+        // Assign the request to the given contractor
+        request.assigned_to = contractor_id;
+        await request.save();
+
+        // Output successful assignemnt of maintenance request
+        res.json({ message: "Request assigned successfully!", request});
     }
     catch (error) {
-
+        console.error("Error assigning request:", error.message);
+        res.status(500).json({ error: "Server error" });
     }
 };
 // Export the functions so they can be used in other parts of the application
-module.exports = { createMaintenanceRequest, addMaintenanceUpdate };
+module.exports = { createMaintenanceRequest, addMaintenanceUpdate, assignContractor };
