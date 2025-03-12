@@ -2,6 +2,11 @@
  * Schema for Mongoose to store maintenance requests
  */
 
+/**
+ * Imports
+ */
+const mongoose = require('mongoose');   // Import mongoose
+
 // Schema for maintenance update; this will be embedded in the main maintenance request
 const MaintenanceUpdateSchema = new mongoose.Schema ({
     updated_by:     {type: String, ref: "user", required: true},
