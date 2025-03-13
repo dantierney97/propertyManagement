@@ -1,0 +1,146 @@
+/**
+ * Maintenance Request API Tests
+ * --------------------------------
+ * Tests the Maintenance Request API endpoints using Jest & Supertest.
+ * Sets up a temporary MongoDB test environment, creates test data, 
+ * performs API calls, and cleans up after each test.
+ */
+
+// Import necessary modules
+const request = require("supertest");  // Simulates API requests
+const express = require("express");    // Sets up a test Express server
+const mongoose = require("mongoose");  // MongoDB client for database connection
+const MaintenanceRequest = require("../models/MaintenanceRequest");  // Mongoose schema for Maintenance Requests
+const maintenanceRoutes = require("../routes/maintenanceRoutes");  // Import maintenance routes
+
+// Initialize Express application for testing
+const app = express();
+app.use(express.json());  // Enables JSON parsing middleware
+app.use("/api", maintenanceRoutes);  // Mounts the maintenance routes under `/api`
+
+// Store test request ID globally to manage test data
+let testRequestId;
+
+/**
+ * 🛠️ Setup & Teardown Functions
+ * ------------------------------
+ * beforeAll:     Runs before all tests - connects to the test database.
+ * beforeEach:    Runs before each test - inserts a test maintenance request.
+ * afterEach:     Runs after each test - removes test data to keep the DB clean.
+ * afterAll:      Runs after all tests - disconnects from the database.
+ */
+
+// Establish a connection to the test MongoDB database before running tests
+beforeAll(async () => {
+    console.log("Connecting to MongoDB Test Database...");
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("Connected to MongoDB Test Database!");
+});
+
+// Before each test, insert a temporary maintenance request into the database
+beforeEach(async () => {
+    console.log("Creating a test maintenance request...");
+    const testRequest = await MaintenanceRequest.create({
+        property_id: "PROP_TEST",     // Test property ID
+        tenant_id: "TENANT_TEST",     // Test tenant ID
+        description: "Test maintenance issue",  // Sample issue description
+        status: "Open",               // Initial status
+        assigned_to: null,            // No contractor assigned initially
+    });
+
+    testRequestId = testRequest._id;  // Store the test document's ID for later use
+    console.log(`Test request created with ID: ${testRequestId}`);
+});
+
+// After each test, remove the test data to maintain database cleanliness
+afterEach(async () => {
+    console.log(`Deleting test request with ID: ${testRequestId}`);
+    await MaintenanceRequest.findByIdAndDelete(testRequestId);
+    console.log("Test request deleted.");
+});
+
+// Once all tests are done, close the database connection
+afterAll(async () => {
+    console.log("Disconnecting from MongoDB Test Database...");
+    await mongoose.disconnect();
+    console.log("Disconnected from MongoDB Test Database.");
+});
+
+/**
+ * Test Suite: Maintenance Request API
+ * --------------------------------------
+ * Contains tests to verify:
+ * 1. Fetching maintenance requests by property ID.
+ * 2. Updating the status of a maintenance request.
+ * 3. Deleting a maintenance request.
+ */
+describe("Maintenance Request API Tests", () => {
+    
+    /**
+     * 🛠️ Test: Retrieve Maintenance Requests by Property ID
+     * ------------------------------------------------------
+     * Sends a POST request to `/api/maintenance/search` with a test property ID.
+     * Expected Outcome:
+     * - Response status should be 200 (Success).
+     * - The response should contain at least one result.
+     * - The first result's `property_id` should match the test property ID.
+     */
+    test("Should retrieve maintenance requests by property_id", async () => {
+        console.log("Searching maintenance requests by property ID...");
+
+        const response = await request(app)
+            .post("/api/maintenance/search")
+            .send({ property_id: "PROP_TEST" });
+
+        expect(response.status).toBe(200);
+        expect(response.body.length).toBeGreaterThan(0);  // Ensure data is returned
+        expect(response.body[0].property_id).toBe("PROP_TEST");  // Verify property_id matches
+
+        console.log("Maintenance request search passed!");
+    });
+
+    /**
+     * 🛠️ Test: Update a Maintenance Request's Status
+     * -----------------------------------------------
+     * Sends a PATCH request to `/api/maintenance/update/:id` with a new status.
+     * Expected Outcome:
+     * - Response status should be 200 (Success).
+     * - The returned object's `status` should match the updated value.
+     */
+    test("Should update a maintenance request's status", async () => {
+        console.log(`Updating maintenance request ID ${testRequestId} status to 'In Progress'...`);
+
+        const response = await request(app)
+            .patch(`/api/maintenance/update/${testRequestId}`)
+            .send({ status: "In Progress" });
+
+        expect(response.status).toBe(200);
+        expect(response.body.status).toBe("In Progress");  // Verify updated status
+
+        console.log("Maintenance request status update passed!");
+    });
+
+    /**
+     * 🛠️ Test: Delete a Maintenance Request
+     * -------------------------------------
+     * Sends a DELETE request to `/api/maintenance/delete/:id` to remove a request.
+     * Expected Outcome:
+     * - Response status should be 200 (Success).
+     * - The request should no longer exist in the database.
+     */
+    test("Should delete a maintenance request", async () => {
+        console.log(`Attempting to delete maintenance request ID ${testRequestId}...`);
+
+        const response = await request(app)
+            .delete(`/api/maintenance/delete/${testRequestId}`);
+
+        expect(response.status).toBe(200);  // Ensure the delete request succeeded
+
+        // Verify the request was actually deleted
+        const deletedRequest = await MaintenanceRequest.findById(testRequestId);
+        expect(deletedRequest).toBeNull();
+
+        console.log("Maintenance request deletion passed!");
+    });
+
+});
