@@ -16,6 +16,7 @@ const MaintenanceUpdateSchema = new mongoose.Schema ({
 
 // Schema for maintenance requests
 const MaintenanceRequestSchema = new mongoose.Schema ({
+    request_id:     {type: String, unique: true},       // Generated from timestamp, property_id & tenant_id
     property_id:    {type: String, ref: "Property", required: true},
     tenant_id:      {type: String, ref: "Tenant", required: true},
     description:    {type: String, required: true},
@@ -24,6 +25,23 @@ const MaintenanceRequestSchema = new mongoose.Schema ({
     created_at:     {type: Date, default: Date.now},
     updates:        [MaintenanceUpdateSchema] // Updates are embedded
 });
+
+// Pre-Save hook to generate request_id from given data
+// This allows the ID to follow a known format which can make it easier to decipher if necessary
+MaintenanceRequestSchema.pre("save", function (next) {
+    if (!this.request_id) {
+        // Format the timestamp to the following: YYYYMMDDHHMMSS (All special characters removed)
+        const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, "");
+
+        // Generate the request_id by concatenating property_id, tenant_id, and the newly formatted timestamp
+        this.request_id = `${this.property_id}${this.tenant_id}${timestamp}`;
+
+        next();
+    }
+    else { next(); }
+})
+
+
 
 // Create the Mongoose Model
 const MaintenanceRequest = mongoose.model("MaintenanceRequest", MaintenanceRequestSchema);
