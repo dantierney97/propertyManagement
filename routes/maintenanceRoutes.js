@@ -1,6 +1,6 @@
 // Import required modules
 const express = require("express");
-const { createMaintenanceRequest, addMaintenanceUpdate, assignContractor, getAllRequestsByProperty } = 
+const { createMaintenanceRequest, addMaintenanceUpdate, assignContractor, getAllRequestsByProperty, deleteMaintenanceRequest } = 
         require("../controllers/maintenanceRequestController");
 
 // Create a new Express Router instance
@@ -18,6 +18,7 @@ router.post("/create", createMaintenanceRequest);
  * @desc        Deletes an exisiting maintenance request
  * @access      Public (Authentication to be added later)
  */
+router.post("/deleteMaintenanceRequest", deleteMaintenanceRequest);
 
 /**
  * @route       PUT /api/maintenance/update

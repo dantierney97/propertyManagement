@@ -1,146 +1,150 @@
-/**
- * Maintenance Request API Tests
- * --------------------------------
- * Tests the Maintenance Request API endpoints using Jest & Supertest.
- * Sets up a temporary MongoDB test environment, creates test data, 
- * performs API calls, and cleans up after each test.
- */
+const request = require("supertest");  // Library to send HTTP requests for testing
+const express = require("express");    // Express framework to simulate the server
+const mongoose = require("mongoose");  // MongoDB connection handler
+const MaintenanceRequest = require("../models/maintenanceRequest");  // Import Mongoose schema
+const maintenanceRoutes = require("../routes/maintenanceRoutes");  // Import maintenance request routes
 
-// Import necessary modules
-const request = require("supertest");  // Simulates API requests
-const express = require("express");    // Sets up a test Express server
-const mongoose = require("mongoose");  // MongoDB client for database connection
-const MaintenanceRequest = require("../models/MaintenanceRequest");  // Mongoose schema for Maintenance Requests
-const maintenanceRoutes = require("../routes/maintenanceRoutes");  // Import maintenance routes
-
-// Initialize Express application for testing
+// Create an Express application instance for testing
 const app = express();
-app.use(express.json());  // Enables JSON parsing middleware
-app.use("/api", maintenanceRoutes);  // Mounts the maintenance routes under `/api`
+app.use(express.json()); // Middleware to parse JSON request bodies
+app.use("/api/maintenance", maintenanceRoutes); // Load maintenance routes
 
-// Store test request ID globally to manage test data
+// Variable to store the ID of a test maintenance request for use in test cases
 let testRequestId;
 
 /**
- * 🛠️ Setup & Teardown Functions
- * ------------------------------
- * beforeAll:     Runs before all tests - connects to the test database.
- * beforeEach:    Runs before each test - inserts a test maintenance request.
- * afterEach:     Runs after each test - removes test data to keep the DB clean.
- * afterAll:      Runs after all tests - disconnects from the database.
+ * Establishes a database connection before any tests run.
  */
-
-// Establish a connection to the test MongoDB database before running tests
 beforeAll(async () => {
-    console.log("Connecting to MongoDB Test Database...");
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log("Connected to MongoDB Test Database!");
-});
-
-// Before each test, insert a temporary maintenance request into the database
-beforeEach(async () => {
-    console.log("Creating a test maintenance request...");
-    const testRequest = await MaintenanceRequest.create({
-        property_id: "PROP_TEST",     // Test property ID
-        tenant_id: "TENANT_TEST",     // Test tenant ID
-        description: "Test maintenance issue",  // Sample issue description
-        status: "Open",               // Initial status
-        assigned_to: null,            // No contractor assigned initially
-    });
-
-    testRequestId = testRequest._id;  // Store the test document's ID for later use
-    console.log(`Test request created with ID: ${testRequestId}`);
-});
-
-// After each test, remove the test data to maintain database cleanliness
-afterEach(async () => {
-    console.log(`Deleting test request with ID: ${testRequestId}`);
-    await MaintenanceRequest.findByIdAndDelete(testRequestId);
-    console.log("Test request deleted.");
-});
-
-// Once all tests are done, close the database connection
-afterAll(async () => {
-    console.log("Disconnecting from MongoDB Test Database...");
-    await mongoose.disconnect();
-    console.log("Disconnected from MongoDB Test Database.");
+    await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 });
 
 /**
- * Test Suite: Maintenance Request API
- * --------------------------------------
- * Contains tests to verify:
- * 1. Fetching maintenance requests by property ID.
- * 2. Updating the status of a maintenance request.
- * 3. Deleting a maintenance request.
+ * Inserts a test maintenance request before each test.
+ * This ensures that there is always a request available for operations such as retrieval, updates, and deletion.
  */
-describe("Maintenance Request API Tests", () => {
-    
-    /**
-     * 🛠️ Test: Retrieve Maintenance Requests by Property ID
-     * ------------------------------------------------------
-     * Sends a POST request to `/api/maintenance/search` with a test property ID.
-     * Expected Outcome:
-     * - Response status should be 200 (Success).
-     * - The response should contain at least one result.
-     * - The first result's `property_id` should match the test property ID.
-     */
-    test("Should retrieve maintenance requests by property_id", async () => {
-        console.log("Searching maintenance requests by property ID...");
-
-        const response = await request(app)
-            .post("/api/maintenance/search")
-            .send({ property_id: "PROP_TEST" });
-
-        expect(response.status).toBe(200);
-        expect(response.body.length).toBeGreaterThan(0);  // Ensure data is returned
-        expect(response.body[0].property_id).toBe("PROP_TEST");  // Verify property_id matches
-
-        console.log("Maintenance request search passed!");
+beforeEach(async () => {
+    const testRequest = await MaintenanceRequest.create({
+        property_id: "PROP_TEST",
+        tenant_id: "TENANT_TEST",
+        description: "Test maintenance issue",
+        status: "Open",
+        assigned_to: null,
     });
 
-    /**
-     * 🛠️ Test: Update a Maintenance Request's Status
-     * -----------------------------------------------
-     * Sends a PATCH request to `/api/maintenance/update/:id` with a new status.
-     * Expected Outcome:
-     * - Response status should be 200 (Success).
-     * - The returned object's `status` should match the updated value.
-     */
-    test("Should update a maintenance request's status", async () => {
-        console.log(`Updating maintenance request ID ${testRequestId} status to 'In Progress'...`);
-
-        const response = await request(app)
-            .patch(`/api/maintenance/update/${testRequestId}`)
-            .send({ status: "In Progress" });
-
-        expect(response.status).toBe(200);
-        expect(response.body.status).toBe("In Progress");  // Verify updated status
-
-        console.log("Maintenance request status update passed!");
-    });
-
-    /**
-     * 🛠️ Test: Delete a Maintenance Request
-     * -------------------------------------
-     * Sends a DELETE request to `/api/maintenance/delete/:id` to remove a request.
-     * Expected Outcome:
-     * - Response status should be 200 (Success).
-     * - The request should no longer exist in the database.
-     */
-    test("Should delete a maintenance request", async () => {
-        console.log(`Attempting to delete maintenance request ID ${testRequestId}...`);
-
-        const response = await request(app)
-            .delete(`/api/maintenance/delete/${testRequestId}`);
-
-        expect(response.status).toBe(200);  // Ensure the delete request succeeded
-
-        // Verify the request was actually deleted
-        const deletedRequest = await MaintenanceRequest.findById(testRequestId);
-        expect(deletedRequest).toBeNull();
-
-        console.log("Maintenance request deletion passed!");
-    });
-
+    // Store the request ID for use in subsequent test cases
+    testRequestId = testRequest._id.toString();
 });
+
+/**
+ * Cleans up by deleting the test maintenance request after each test.
+ * This prevents test data from accumulating and affecting future tests.
+ */
+afterEach(async () => {
+    await MaintenanceRequest.findByIdAndDelete(testRequestId);
+});
+
+/**
+ * Closes the database connection after all tests have been executed.
+ */
+afterAll(async () => {
+    await mongoose.disconnect();
+});
+
+/**
+ * Function containing all unit tests for the maintenance request API.
+ */
+const testMaintenanceRequests = () => {
+    describe("Maintenance Request API Tests", () => {
+        
+        /**
+         * Tests the creation of a new maintenance request.
+         * Verifies that the request is created successfully and a valid response is returned.
+         */
+        test("Create a new maintenance request", async () => {
+            const response = await request(app)
+                .post("/api/maintenance/create")
+                .send({
+                    property_id: "PROP_NEW",
+                    tenant_id: "TENANT_NEW",
+                    description: "New test issue"
+                });
+
+            expect(response.status).toBe(201);
+            expect(response.body.message).toBe("Maintenance request created successfully!");
+            expect(response.body.request).toHaveProperty("_id");
+        });
+
+        /**
+         * Tests the deletion of an existing maintenance request.
+         * Ensures that the request is deleted and cannot be found afterward.
+         */
+        test("Delete a maintenance request", async () => {
+            const response = await request(app)
+                .post("/api/maintenance/deleteMaintenanceRequest")
+                .send({ request_id: testRequestId });
+
+            expect(response.status).toBe(200);
+            expect(response.body.message).toBe("Maintenance Request deleted successfully!");
+
+            // Verify that the request was successfully removed from the database
+            const deletedRequest = await MaintenanceRequest.findById(testRequestId);
+            expect(deletedRequest).toBeNull();
+        });
+
+        /**
+         * Tests the ability to add an update to a maintenance request.
+         * Verifies that the update is recorded correctly in the database.
+         */
+        test("Add an update to a maintenance request", async () => {
+            const response = await request(app)
+                .put("/api/maintenance/update")
+                .send({
+                    request_id: testRequestId,
+                    updated_by: "Admin",
+                    description: "Issue being resolved"
+                });
+
+            expect(response.status).toBe(200);
+            expect(response.body.message).toBe("Maintenance request updated successfully!");
+            expect(response.body.request.updates.length).toBeGreaterThan(0);
+        });
+
+        /**
+         * Tests the assignment of a contractor to a maintenance request.
+         * Ensures that the contractor ID is properly updated in the database.
+         */
+        test("Assign a contractor to a maintenance request", async () => {
+            const response = await request(app)
+                .put("/api/maintenance/assignContractor")
+                .send({
+                    request_id: testRequestId,
+                    contractor_id: "CONTRACTOR_001"
+                });
+
+            expect(response.status).toBe(200);
+            expect(response.body.message).toBe("Request assigned successfully!");
+            expect(response.body.request.assigned_to).toBe("CONTRACTOR_001");
+        });
+
+        /**
+         * Tests the retrieval of maintenance requests by property.
+         * Ensures that the response includes only requests related to the specified property ID.
+         */
+        test("Retrieve maintenance requests by property", async () => {
+            const response = await request(app)
+                .post("/api/maintenance/getRequestsByProperty")
+                .send({
+                    property_id: "PROP_TEST"
+                });
+
+            expect(response.status).toBe(200);
+            expect(response.body.requests.length).toBeGreaterThan(0);
+            expect(response.body.requests[0].property_id).toBe("PROP_TEST");
+        });
+
+    });
+};
+
+// Export function for use in test.js
+module.exports = testMaintenanceRequests;
