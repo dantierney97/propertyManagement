@@ -4,4 +4,10 @@
  * This script initializes testing by calling specific test files.
  */
 
-require("./tests/testMaintenanceRequests"); // Import and execute maintenance request tests
+const testMaintenanceRequests = require("./dataTests/testMaintenanceRequests"); // Import and execute maintenance request tests
+
+/**
+ * Add Imported test functions here
+ */
+
+testMaintenanceRequests();

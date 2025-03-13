@@ -1,8 +1,9 @@
 const request = require("supertest");  // Library to send HTTP requests for testing
 const express = require("express");    // Express framework to simulate the server
 const mongoose = require("mongoose");  // MongoDB connection handler
-const MaintenanceRequest = require("../models/maintenanceRequest");  // Import Mongoose schema
-const maintenanceRoutes = require("../routes/maintenanceRoutes");  // Import maintenance request routes
+const MaintenanceRequest = require("../../models/maintenanceRequest");  // Import Mongoose schema
+const maintenanceRoutes = require("../../routes/maintenanceRoutes");  // Import maintenance request routes
+require("dotenv").config();
 
 // Create an Express application instance for testing
 const app = express();
@@ -16,7 +17,13 @@ let testRequestId;
  * Establishes a database connection before any tests run.
  */
 beforeAll(async () => {
-    await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+    const mongoUri = process.env.MONGO_URI || "mongodb://admin:admin@localhost:27017/property_management_mongo";
+
+    if (!mongoUri) {
+        throw new Error("MongoDB URI is missing. Check your .env file or environment variables.");
+    }
+
+    await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
 });
 
 /**
@@ -41,6 +48,19 @@ beforeEach(async () => {
  * This prevents test data from accumulating and affecting future tests.
  */
 afterEach(async () => {
+    // Check if testRequestId is defined
+    if (!testRequestId) {
+        console.warn("Skipping afterEach cleanup: testRequestId is undefined.");
+        return;
+    }
+
+    const requestExists = await MaintenanceRequest.findById(testRequestId);
+    //Check that the request exists in the database
+    if (!requestExists) {
+        console.warn(`Skipping cleanup: No maintenance request found with ID ${testRequestId}`);
+        return;
+    }
+
     await MaintenanceRequest.findByIdAndDelete(testRequestId);
 });
 

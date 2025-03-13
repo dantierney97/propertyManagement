@@ -1,6 +1,6 @@
 // Import required modules
 const express = require("express");
-const { createMaintenanceRequest, addMaintenanceUpdate, assignContractor, getAllRequestsByProperty, deleteMaintenanceRequest } = 
+const { createMaintenanceRequest, addMaintenanceUpdate, assignContractor, getRequestsByProperty, deleteMaintenanceRequest } = 
         require("../controllers/maintenanceRequestController");
 
 // Create a new Express Router instance
