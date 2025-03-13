@@ -129,7 +129,8 @@ const assignContractor = async (req, res) => {
  * @param {Object} res - The response object used to return the result
  */
 const getAllRequestsByProperty = async (req, res) => {
-    // Extract the request_id from the body
+    try {
+        // Extract the request_id from the body
     const property_id = req.body;
 
     // Find all maintenance requests for the given property
@@ -138,6 +139,14 @@ const getAllRequestsByProperty = async (req, res) => {
     // Check that results have been returned
     if (requests === 0) {
         return res.status(404).json({ error: "No Maintenance Requests found using that property!" });
+    }
+
+    // Return the results
+    res.json({ message: "Maintenance Requests retrieved successfully!", requests });
+    }
+    catch ( error ) {
+        console.error( "Error retrieving maintenance requests:", error.message );
+        res.status(500).json({ error: "Server Error!",})
     }
 }
 
