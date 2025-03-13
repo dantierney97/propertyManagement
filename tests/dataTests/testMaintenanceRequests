@@ -40,7 +40,8 @@ beforeEach(async () => {
     });
 
     // Store the request ID for use in subsequent test cases
-    testRequestId = testRequest._id.toString();
+    testObjectId = testRequest._id.toString();  // ObjectID, internal use only
+    testRequestId = testRequest.request_id;     // Custom ID used for external purposes
 });
 
 /**
@@ -49,19 +50,19 @@ beforeEach(async () => {
  */
 afterEach(async () => {
     // Check if testRequestId is defined
-    if (!testRequestId) {
+    if (!testObjectId) {
         console.warn("Skipping afterEach cleanup: testRequestId is undefined.");
         return;
     }
 
-    const requestExists = await MaintenanceRequest.findById(testRequestId);
+    const requestExists = await MaintenanceRequest.findById(testObjectId);
     //Check that the request exists in the database
     if (!requestExists) {
-        console.warn(`Skipping cleanup: No maintenance request found with ID ${testRequestId}`);
+        console.warn(`Skipping cleanup: No maintenance request found with ID ${testObjectId}`);
         return;
     }
 
-    await MaintenanceRequest.findByIdAndDelete(testRequestId);
+    await MaintenanceRequest.findByIdAndDelete(testObjectId);
 });
 
 /**
@@ -108,7 +109,7 @@ const testMaintenanceRequests = () => {
             expect(response.body.message).toBe("Maintenance Request deleted successfully!");
 
             // Verify that the request was successfully removed from the database
-            const deletedRequest = await MaintenanceRequest.findById(testRequestId);
+            const deletedRequest = await MaintenanceRequest.findOne(testRequestId);
             expect(deletedRequest).toBeNull();
         });
 

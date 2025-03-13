@@ -87,7 +87,7 @@ const addMaintenanceUpdate = async (req, res) => {
         const { request_id, updated_by, description } = req.body;
 
         // Find the maintenance request in the database by its ID
-        const request = await MaintenanceRequest.findById(request_id);
+        const request = await MaintenanceRequest.findOne({request_id});
 
         // If the request does not exist, return an error response
         if (!request) {
