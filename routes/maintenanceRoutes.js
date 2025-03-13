@@ -32,7 +32,7 @@ router.put("/assignContractor", assignContractor);
  * @desc    Retrieves all maintenance requests for a given property regardless of status
  * @access  Public (Authentication to be added later)    
  */
-router.post("/getAllRequestsByProperty", getAllRequestsByProperty);
+router.post("/getRequestsByProperty", getRequestsByProperty);
 
 // Output successful route loading
 console.log("maintenanceRoutes Loaded Successfully!");
