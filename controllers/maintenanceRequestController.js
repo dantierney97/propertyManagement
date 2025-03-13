@@ -118,5 +118,16 @@ const assignContractor = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 };
+
+/**
+ * Allows for a user to retrieve maintenance requests by property
+ * 
+ * This function will allow a user to retrieve all maintenance requests for a specific property.
+ * It will retrieve the request by the property_id.
+ * 
+ * @param {Object} req - The request object containing the property_id
+ * @param {Object} res - The response object used to return the result
+ */
+
 // Export the functions so they can be used in other parts of the application
 module.exports = { createMaintenanceRequest, addMaintenanceUpdate, assignContractor };
