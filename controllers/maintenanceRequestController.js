@@ -101,7 +101,7 @@ const assignContractor = async (req, res) => {
         const { request_id, contractor_id} = eq.body;
 
         // Find the relevant maintenance request by ID
-        const request = await MaintenanceRequest.findById(request_id);
+        const request = await MaintenanceRequest.findOne({request_id});
         if (!request) {     // Checks that the request is not null to ensure that a request has been found
             return res.status(404).json({ error: "Maintenance Request not found"});
         }
