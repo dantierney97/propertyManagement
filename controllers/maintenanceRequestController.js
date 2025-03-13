@@ -128,7 +128,7 @@ const assignContractor = async (req, res) => {
  * @param {Object} req - The request object containing the property_id
  * @param {Object} res - The response object used to return the result
  */
-const getAllRequestsByProperty = async (req, res) => {
+const getRequestsByProperty = async (req, res) => {
     try {
         // Extract the request_id from the body
     const { property_id, active_only} = req.body;
@@ -165,4 +165,4 @@ const getAllRequestsByProperty = async (req, res) => {
 }
 
 // Export the functions so they can be used in other parts of the application
-module.exports = { createMaintenanceRequest, addMaintenanceUpdate, assignContractor,getAllRequestsByProperty };
+module.exports = { createMaintenanceRequest, addMaintenanceUpdate, assignContractor,getRequestsByProperty };
