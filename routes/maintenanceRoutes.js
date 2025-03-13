@@ -1,6 +1,6 @@
 // Import required modules
 const express = require("express");
-const { createMaintenanceRequest, addMaintenanceUpdate, assignContractor } = 
+const { createMaintenanceRequest, addMaintenanceUpdate, assignContractor, getAllRequestsByProperty } = 
         require("../controllers/maintenanceRequestController");
 
 // Create a new Express Router instance
@@ -26,6 +26,13 @@ router.put("/update", addMaintenanceUpdate);
  * @access  Public (Authentication to be added later)
  */
 router.put("/assignContractor", assignContractor);
+
+/**
+ * @route   POST /api/maintenance/getAllRequestsByProperty
+ * @desc    Retrieves all maintenance requests for a given property regardless of status
+ * @access  Public (Authentication to be added later)    
+ */
+router.post("/getAllRequestsByProperty", getAllRequestsByProperty);
 
 // Output successful route loading
 console.log("maintenanceRoutes Loaded Successfully!");
