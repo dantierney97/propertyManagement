@@ -1,5 +1,5 @@
 // Import the MaintenanceRequest model to interact with the MongoDB collection
-const MaintenanceRequest = require("../models/MaintenanceRequest");
+const MaintenanceRequest = require("../models/maintenanceRequest");
 
 /**
  * Create a new maintenance request
