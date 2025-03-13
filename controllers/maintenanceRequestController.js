@@ -98,7 +98,7 @@ const addMaintenanceUpdate = async (req, res) => {
 const assignContractor = async (req, res) => {
     try {
         // Extract contractor details from the request body
-        const { request_id, contractor_id} = eq.body;
+        const { request_id, contractor_id} = req.body;
 
         // Find the relevant maintenance request by ID
         const request = await MaintenanceRequest.findOne({request_id});
@@ -120,7 +120,7 @@ const assignContractor = async (req, res) => {
 };
 
 /**
- * Allows for a user to retrieve maintenance requests by property
+ * Allows for a user to retrieve all maintenance requests by property
  * 
  * This function will allow a user to retrieve all maintenance requests for a specific property.
  * It will retrieve the request by the property_id.
@@ -128,6 +128,18 @@ const assignContractor = async (req, res) => {
  * @param {Object} req - The request object containing the property_id
  * @param {Object} res - The response object used to return the result
  */
+const getAllRequestsByProperty = async (req, res) => {
+    // Extract the request_id from the body
+    const property_id = req.body;
+
+    // Find all maintenance requests for the given property
+    const requests = await MaintenanceRequest.find({property_id});
+
+    // Check that results have been returned
+    if (requests === 0) {
+        return res.status(404).json({ error: "No Maintenance Requests found using that property!" });
+    }
+}
 
 // Export the functions so they can be used in other parts of the application
 module.exports = { createMaintenanceRequest, addMaintenanceUpdate, assignContractor };
