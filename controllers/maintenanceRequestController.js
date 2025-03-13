@@ -120,7 +120,7 @@ const assignContractor = async (req, res) => {
 };
 
 /**
- * Allows for a user to retrieve all maintenance requests by property
+ * Allows for a user to retrieve maintenance requests by property, with optional filtering by status
  * 
  * This function will allow a user to retrieve all maintenance requests for a specific property.
  * It will retrieve the request by the property_id.
@@ -131,14 +131,28 @@ const assignContractor = async (req, res) => {
 const getAllRequestsByProperty = async (req, res) => {
     try {
         // Extract the request_id from the body
-    const property_id = req.body;
+    const { property_id, active_only} = req.body;
 
-    // Find all maintenance requests for the given property
-    const requests = await MaintenanceRequest.find({property_id});
+    // Ensure that property_id has been given
+    if (!property_id) {
+        return res.status(400).json({ error: "Property ID is required!"});
+    }
+
+    // Create query object
+
+    let query = { property_id };
+
+    // Check if the active_only filter was set to true
+    if (active_only) {
+        query.status({ $in: ["Open", "In Progress"] });
+    }
+
+    // Find all maintenance requests for the given query
+    const requests = await MaintenanceRequest.find({query});
 
     // Check that results have been returned
     if (requests === 0) {
-        return res.status(404).json({ error: "No Maintenance Requests found using that property!" });
+        return res.status(404).json({ error: "No Maintenance Requests found using that query!" });
     }
 
     // Return the results
