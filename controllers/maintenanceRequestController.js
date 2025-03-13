@@ -66,7 +66,7 @@ const deleteMaintenanceRequest = async (req, res) => {
     }
     catch (error) {
         console.error("Error deleting maintenance request")
-        res.status(500).json({ error: "Server error!"}, error.message);
+        res.status(500).json({ error: "Server error!", message: error.message });
     }
 
 }
