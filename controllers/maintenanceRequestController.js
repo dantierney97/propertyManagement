@@ -151,4 +151,4 @@ const getAllRequestsByProperty = async (req, res) => {
 }
 
 // Export the functions so they can be used in other parts of the application
-module.exports = { createMaintenanceRequest, addMaintenanceUpdate, assignContractor };
+module.exports = { createMaintenanceRequest, addMaintenanceUpdate, assignContractor,getAllRequestsByProperty };
