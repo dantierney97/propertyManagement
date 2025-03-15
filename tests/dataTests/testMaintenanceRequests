@@ -42,6 +42,8 @@ beforeEach(async () => {
     // Store the request ID for use in subsequent test cases
     testObjectId = testRequest._id.toString();  // ObjectID, internal use only
     testRequestId = testRequest.request_id;     // Custom ID used for external purposes
+
+
 });
 
 /**
@@ -109,7 +111,7 @@ const testMaintenanceRequests = () => {
             expect(response.body.message).toBe("Maintenance Request deleted successfully!");
 
             // Verify that the request was successfully removed from the database
-            const deletedRequest = await MaintenanceRequest.findOne(testRequestId);
+            const deletedRequest = await MaintenanceRequest.findOne({testRequestId});
             expect(deletedRequest).toBeNull();
         });
 

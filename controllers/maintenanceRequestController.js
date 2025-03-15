@@ -54,7 +54,8 @@ const deleteMaintenanceRequest = async (req, res) => {
     const request_id = req.body;
 
     // Find the maintenance request that needs to be deleted
-    const deleteRequest = await mongoose.findOneAndDelete({request_id});
+    const deleteRequest = await MaintenanceRequest.findOneAndDelete(request_id);
+    console.log(deleteRequest);
 
     // If no request has been found, return a not-found error
     if (!deleteRequest) {
@@ -62,10 +63,10 @@ const deleteMaintenanceRequest = async (req, res) => {
     }
 
     // Return success message
-    res.status(200).json({ message: "Maintenance Request deleted sucessfully!"});
+    res.status(200).json({ message: "Maintenance Request deleted successfully!"});
     }
     catch (error) {
-        console.error("Error deleting maintenance request")
+        console.error("Error deleting maintenance request", error.message);
         res.status(500).json({ error: "Server error!", message: error.message });
     }
 
@@ -179,7 +180,7 @@ const getRequestsByProperty = async (req, res) => {
     }
 
     // Find all maintenance requests for the given query
-    const requests = await MaintenanceRequest.find({query});
+    const requests = await MaintenanceRequest.find(query);
 
     // Check that results have been returned
     if (requests === 0) {
