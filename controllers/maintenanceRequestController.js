@@ -55,7 +55,6 @@ const deleteMaintenanceRequest = async (req, res) => {
 
     // Find the maintenance request that needs to be deleted
     const deleteRequest = await MaintenanceRequest.findOneAndDelete(request_id);
-    console.log(deleteRequest);
 
     // If no request has been found, return a not-found error
     if (!deleteRequest) {
