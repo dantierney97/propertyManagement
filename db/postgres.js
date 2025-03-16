@@ -33,7 +33,7 @@ const connectPostgres = async () => {
         // Release the client back to the pool for reuse
         client.release();
     } catch (error) {
-        console.error("PostgreSQL connection error:", error.message);
+        console.error("PostgreSQL connection error:", error.message || error);
     }
 };
 

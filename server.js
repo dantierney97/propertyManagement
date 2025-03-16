@@ -66,7 +66,7 @@ const startServer = async () => {
             console.log(`Express Server running on http://localhost:${port}`); // Log server start
         });
     } catch (error) {
-        console.error("Error starting the server:", error.message); // Log any errors
+        console.error("Error starting the server:", error.message || error); // Log any errors
         process.exit(1); // Exit process if startup fails
     }
 };

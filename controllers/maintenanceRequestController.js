@@ -33,7 +33,7 @@ const createMaintenanceRequest = async (req, res) => {
         });
     } catch (error) {
         // Log error to the server console
-        console.error("Error creating maintenance request:", error.message);
+        console.error("Error creating maintenance request:", error.message || error);
 
         // Send a 500 response indicating a server error
         res.status(500).json({ error: "Server error" });
@@ -65,8 +65,8 @@ const deleteMaintenanceRequest = async (req, res) => {
     res.status(200).json({ message: "Maintenance Request deleted successfully!"});
     }
     catch (error) {
-        console.error("Error deleting maintenance request", error.message);
-        res.status(500).json({ error: "Server error!", message: error.message });
+        console.error("Error deleting maintenance request", error.message || error);
+        res.status(500).json({ error: "Server error!", message: error.message || error });
     }
 
 }
@@ -110,7 +110,7 @@ const addMaintenanceUpdate = async (req, res) => {
         });
     } catch (error) {
         // Log error to the server console
-        console.error("Error updating maintenance request:", error.message);
+        console.error("Error updating maintenance request:", error.message || error);
 
         // Send a 500 response indicating a server error
         res.status(500).json({ error: "Server error" });
@@ -145,7 +145,7 @@ const assignContractor = async (req, res) => {
         res.json({ message: "Request assigned successfully!", request});
     }
     catch (error) {
-        console.error("Error assigning request:", error.message);
+        console.error("Error assigning request:", error.message || error);
         res.status(500).json({ error: "Server error" });
     }
 };
@@ -190,7 +190,7 @@ const getRequestsByProperty = async (req, res) => {
     res.json({ message: "Maintenance Requests retrieved successfully!", requests });
     }
     catch ( error ) {
-        console.error( "Error retrieving maintenance requests:", error.message );
+        console.error( "Error retrieving maintenance requests:", error.message || error );
         res.status(500).json({ error: "Server Error!",})
     }
 }

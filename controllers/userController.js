@@ -44,7 +44,7 @@ const createUser = async (req, res) => {
 
     } catch (error) {
         // Log the error message to the server console
-        console.error("Error creating user:", error.message || error);
+        console.error("Error creating user:", error.message || error || error);
 
         // Handle duplicate email constraint violation
         if (error.code === "23505") {
@@ -91,7 +91,7 @@ const getUserByEmail = async (req, res) => {
 
     } catch (error) {
         // Log the error to the server console
-        console.error("Error retrieving user by email:", error.message);
+        console.error("Error retrieving user by email:", error.message || error);
 
         // Send a 500 response indicating a server-side error
         res.status(500).json({ error: "Server Error!" });
