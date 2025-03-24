@@ -98,5 +98,27 @@ const getUserByEmail = async (req, res) => {
     }
 };
 
+
+/**
+ * Authenticate a user by verifying their provided email address and password.
+ * If successful, a JWT Token is returned to the user
+ * 
+ * @param {Object} req - The request object containing the email address and password given by the user
+ * @param {Object} res - The response object used to return the JWT Token to the user.
+ */
+const authenticateUser = async (req, res) => {
+    try {
+
+    }
+    catch ( error ) {
+        // Log the error to the server console
+        console.error("Error authenticating user:", error.message || error);
+
+        // Send a 500 respinse indicating a server-side error
+        res.status(500).json({ error: "Server Error!"});
+    }
+}
+
+
 // Export the functions so they can be used in route handlers
 module.exports = { createUser, getUserByEmail };
