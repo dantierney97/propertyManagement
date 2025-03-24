@@ -109,6 +109,18 @@ const getUserByEmail = async (req, res) => {
  */
 const authenticateUser = async (req, res) => {
     try {
+        // Extracted user information from the request body
+        const {user, password} = req.body;
+
+        // Validate that the user sent an email address
+        if(!user) {
+            return res.status(400).json({ error: "Please provide an email address!"});
+
+            if (!user.includes("@")) {
+                return res.status(400).json({ error: "Please provide a valid email address"});
+            }
+        }
+
 
     }
     catch ( error ) {
