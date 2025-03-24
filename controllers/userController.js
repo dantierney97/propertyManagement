@@ -121,6 +121,11 @@ const authenticateUser = async (req, res) => {
             }
         }
 
+        // Check that password is not null
+        if (!password) {
+            return res.status(400).json({ error: "Please enter a password!"});
+        }
+
 
     }
     catch ( error ) {
