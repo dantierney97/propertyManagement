@@ -125,6 +125,11 @@ const authenticateUser = async (req, res) => {
         // Retrieve the user from the database
         const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
 
+        // Check that the query returned a user
+        if (user === 0) {
+            return res.status(404).json({ error: "User not found!"});
+        }
+
 
     }
     catch ( error ) {
