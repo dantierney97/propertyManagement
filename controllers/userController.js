@@ -1,4 +1,5 @@
 // Import required modules
+const jwt           = require("jsonwebtoken");      // JWT for token generation
 const bcrypt        = require("bcrypt");            // Import Bcrypt for password hashing
 const { pool }      = require("../db/postgres");    // Import PostgreSQL database connection pool
 require('dotenv').config();                         // Load environment variables from .env file
