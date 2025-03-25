@@ -152,7 +152,6 @@ const authenticateUser = async (req, res) => {
         // Return the token to the user
         res.json({message: "Authentication Successful!", token});
 
-
     }
     catch ( error ) {
         // Log the error to the server console
@@ -165,4 +164,4 @@ const authenticateUser = async (req, res) => {
 
 
 // Export the functions so they can be used in route handlers
-module.exports = { createUser, getUserByEmail };
+module.exports = { createUser, getUserByEmail, authenticateUser };
