@@ -134,6 +134,23 @@ const authenticateUser = async (req, res) => {
         const user = result.rows[0];
 
         // Validate the given password with the stored & hashed password
+        const isMatch = await bcrypt.compare(password, user.password_hash);
+        if (!isMatch) {
+            return res.status(401).json({ error: "Email or password incorrect!"});
+        }
+
+        // Generate JWT Token
+        const token = jwt.sign(
+            {id:    user.id,
+             email: user.email,
+             role:  user.role
+            },
+            process.env.JWT_SECRET,
+            {expiresIn: "1h"} // Token expires in 1 Hour
+        );
+
+        // Return the token to the user
+        res.json({message: "Authentication Successful!", token});
 
 
     }
