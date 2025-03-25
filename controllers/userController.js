@@ -123,12 +123,17 @@ const authenticateUser = async (req, res) => {
         }
 
         // Retrieve the user from the database
-        const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+        const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
 
         // Check that the query returned a user
-        if (user.rows.length === 0) {
+        if (result.rows.length === 0) {
             return res.status(404).json({ error: "User not found!"});
         }
+
+        // Assign recieved user to object
+        const user = result.rows[0];
+
+        // Validate the given password with the stored & hashed password
 
 
     }
