@@ -145,7 +145,8 @@ const authenticateUser = async (req, res) => {
         console.log("Hashed Password:", user.password_hash);
 
         // Generate JWT Token
-        console.log(process.env.JWT_SECRET);
+        console.log(".env: ", require('dotenv').config());
+        console.log("JWT_SECRET: ", process.env.JWT_SECRET);
         const token = jwt.sign(
             {id:    user.id,
              email: user.email,

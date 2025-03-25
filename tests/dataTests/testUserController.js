@@ -1,5 +1,5 @@
 
-require('dotenv').config();
+require('dotenv').config({path:"../.env"});
 /**
  * @fileoverview This file contains unit tests for user-related API operations,
  * ensuring user creation, retrieval, and error handling behave correctly.
