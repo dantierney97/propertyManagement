@@ -1,8 +1,9 @@
 // Import required modules
+require('dotenv').config();  
 const jwt           = require("jsonwebtoken");      // JWT for token generation
 const bcrypt        = require("bcrypt");            // Import Bcrypt for password hashing
 const { pool }      = require("../db/postgres");    // Import PostgreSQL database connection pool
-require('dotenv').config();                         // Load environment variables from .env file
+                       // Load environment variables from .env file
 
 /**
  * Create a new user and store the record in the database.
@@ -139,7 +140,12 @@ const authenticateUser = async (req, res) => {
             return res.status(401).json({ error: "Email or password incorrect!"});
         }
 
+        console.log("DB User:", user);
+        console.log("Provided Password:", password);
+        console.log("Hashed Password:", user.password_hash);
+
         // Generate JWT Token
+        console.log(process.env.JWT_SECRET);
         const token = jwt.sign(
             {id:    user.id,
              email: user.email,
@@ -150,7 +156,7 @@ const authenticateUser = async (req, res) => {
         );
 
         // Return the token to the user
-        res.json({message: "Authentication Successful!", token});
+        res.status(200).json({message: "Authentication Successful!", token});
 
     }
     catch ( error ) {

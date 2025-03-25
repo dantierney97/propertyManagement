@@ -1,3 +1,5 @@
+
+require('dotenv').config();
 /**
  * @fileoverview This file contains unit tests for user-related API operations,
  * ensuring user creation, retrieval, and error handling behave correctly.
@@ -5,7 +7,13 @@
 
 // Import required modules
 const request = require("supertest");
-const { createUser, getUserByEmail } = require("../../controllers/userController");
+const { createUser, getUserByEmail, authenticateUser } = require("../../controllers/userController");
+/**
+ * Authenticates a user and returns a JWT token upon successful login.
+ * @function
+ * @param {Object} req - The request object containing user credentials.
+ * @param {Object} res - The response object to send the result.
+ */
 const { pool } = require("../../db/postgres");
 const express = require("express");
 const bcrypt = require("bcrypt");
@@ -27,6 +35,7 @@ async function testUserController() {
     // Define API endpoints for testing
     app.post("/api/users/createUser", createUser);
     app.post("/api/users/getUserByEmail", getUserByEmail);
+    app.post("/api/users/auth", authenticateUser); // Added authentication endpoint
 
     describe("User Controller API Tests", () => {
         beforeAll(() => {
@@ -114,6 +123,56 @@ async function testUserController() {
             expect(response.status).toBe(404);
             expect(response.body).toHaveProperty("error", "User not found!");
             console.log("Test Passed: Non-existent user handled correctly");
+        });
+
+        // Authentication tests
+        test("Should successfully authenticate a user", async () => {
+            // Mock database response for user authentication
+            const password = "securepassword";
+            const hashedPassword = await bcrypt.hash(password, 10);
+            pool.query.mockResolvedValueOnce({
+                rows: [{ id: 1, name: "John Doe", email: "johndoe@example.com", password_hash: hashedPassword }]
+            });
+
+            // Send request to authenticate user
+            const response = await request(app)
+                .post("/api/users/auth")
+                .send({ email: "johndoe@example.com", password });
+
+            expect(response.status).toBe(200);
+            expect(response.body).toHaveProperty("token");
+            console.log("Test Passed: User authenticated successfully");
+        });
+
+        test("Should fail authentication with incorrect password", async () => {
+            // Mock database response for user authentication
+            const hashedPassword = await bcrypt.hash("securepassword", 10);
+            pool.query.mockResolvedValueOnce({
+                rows: [{ id: 1, name: "John Doe", email: "johndoe@example.com", password_hash: hashedPassword }]
+            });
+
+            // Send request to authenticate user with incorrect password
+            const response = await request(app)
+                .post("/api/users/auth")
+                .send({ email: "johndoe@example.com", password: "wrongpassword" });
+
+            expect(response.status).toBe(401);
+            expect(response.body).toHaveProperty("error", "Email or password incorrect!");
+            console.log("Test Passed: Incorrect password handled correctly");
+        });
+
+        test("Should handle authentication for non-existent user", async () => {
+            // Mock database response for non-existent user
+            pool.query.mockResolvedValueOnce({ rows: [] });
+
+            // Send request for non-existent user authentication
+            const response = await request(app)
+                .post("/api/users/auth")
+                .send({ email: "doesnotexist@example.com", password: "securepassword" });
+
+            expect(response.status).toBe(404);
+            expect(response.body).toHaveProperty("error", "User not found!");
+            console.log("Test Passed: Non-existent user authentication handled correctly");
         });
     });
 }
