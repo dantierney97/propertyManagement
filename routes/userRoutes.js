@@ -1,6 +1,6 @@
 // Import required modules
 const express = require("express");  // Express framework for handling routes
-const { createUser, getUserByEmail } = require("../controllers/userController"); // Import user controller functions
+const { createUser, getUserByEmail, authenticateUser } = require("../controllers/userController"); // Import user controller functions
 
 // Create a new Express Router instance
 const router = express.Router();
@@ -24,6 +24,16 @@ router.post("/createUser", createUser);
  * If found, it returns the user details excluding the password.
  */
 router.post("/getUserByEmail", getUserByEmail);
+
+/**
+ * @route   POST /api/users/auth
+ * @desc    Validates a user's credentials and issues them a JWT Token
+ * @access  Public
+ * 
+ * This route searches for a user based on a given email address. The given password is then compared to
+ * the stored and hashed password. If they match successfully, the user is given a JWT Token for access
+ */
+router.post("/auth", authenticateUser);
 
 // Log successful loading of user routes to the console
 console.log("userRoutes Loaded Successfully!");
