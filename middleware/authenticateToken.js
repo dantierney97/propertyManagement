@@ -13,11 +13,13 @@ const authenticateToken = (req, res, next) => {
 
     // Check if a token has been provided
     if (!authHeader) {
-        return res.status(401).json({ error: "Access Denied. No Token Provided!"});
+        return res.status(401).json({ error: "Access Denied. No Token Provided!" });
     }
 
     // Remove 'bearer' prefix from token
     const token = authHeader.replace('Bearer ', "");
 
 }
+
+module.exports = authenticateToken;
 
