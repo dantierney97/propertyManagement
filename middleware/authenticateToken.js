@@ -19,6 +19,18 @@ const authenticateToken = (req, res, next) => {
     // Remove 'bearer' prefix from token
     const token = authHeader.replace('Bearer ', "");
 
+    try {
+        // Synchronus Verification
+        const verifiedUser = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = verifiedUser;
+        next();
+    }
+    catch (error) {
+        console.error("Error authenticating token: ", error.message || error);
+
+        res.status(403).json({ error: "Invalid or Expired token!" });
+    }
+
 }
 
 module.exports = authenticateToken;
